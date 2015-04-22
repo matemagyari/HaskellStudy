@@ -45,10 +45,18 @@ lineToTransaction line =
         partner = parts !! 0
         currency = parts !! 1
         amount = read (parts !! 2) :: Amount
-    in Transaction (Money amount currency) partner    
+    in Transaction (Money amount currency) partner
+
+readTransactionsFile :: String -> IO [String]
+readTransactionsFile f = do 
+    content <- readFile f
+    return (lines content)
 
 main = do
-    let transactions = map lineToTransaction ["XY,GBP,10", "ZZ,USD,20", "ZZ,GBP,30"]
+    content <- readFile "t"
+    let lines2 = lines content 
+        --lines2 = ["XY,GBP,10", "ZZ,USD,20", "ZZ,GBP,30"]
+        transactions = map lineToTransaction lines2
         exchangeRates = Map.fromList [(("USD","GBP"),1.5),(("GBP","USD"),0.7)]
         aggregatedForPartner = aggregateTransactionsOfPartner transactions "ZZ" "USD" exchangeRates
         aggregatedByPartner = aggregateTransactionsByPartner transactions "USD" exchangeRates
